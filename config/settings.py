@@ -8,7 +8,6 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -48,11 +47,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-      # Add the account middleware:
+    # Add the account middleware:
     "allauth.account.middleware.AccountMiddleware",
 ]
-
-
 
 
 AUTHENTICATION_BACKENDS = [
@@ -97,7 +94,7 @@ SOCIALACCOUNT_PROVIDERS = {
 
 SITE_ID = 1
 LOGIN_URL = 'accounts/login/'
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/profile/'
 LOGOUT_REDIRECT_URL = '/'
 
 
@@ -179,7 +176,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/prifile/'  # Redirect to profile page after login
 
 
 REST_FRAMEWORK = {
@@ -200,8 +197,8 @@ SPECTACULAR_SETTINGS = {
         "name": "MIT License",
         "url": "https://opensource.org/license/mit",
     },
-    
-    "SWAGGER_UI_DIST": "SIDECAR",  
+
+    "SWAGGER_UI_DIST": "SIDECAR",
     "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
-    "REDOC_DIST": "SIDECAR",  
+    "REDOC_DIST": "SIDECAR",
 }
