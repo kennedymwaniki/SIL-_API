@@ -23,5 +23,5 @@ def send_sms(phone_number, message):
 
 
 def send_order_confirmation_sms(customer, order):
-    message = f"Hello {customer.user.firstname}, your order with code {order.order_code} has been confirmed. Thank you for shopping with us!"
+    message = f"Hello {customer.user.first_name}, your order with code {order.order_code} has been confirmed. Thank you for shopping with us!"
     return send_sms(customer.phone_number, message)
