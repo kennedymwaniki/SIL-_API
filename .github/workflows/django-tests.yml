@@ -46,5 +46,8 @@ jobs:
           DB_PORT: 5432
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID || '' }}
           GOOGLE_SECRET: ${{ secrets.GOOGLE_SECRET || '' }}
+          AFRICASTALKING_USERNAME: sandbox
+          AFRICASTALKING_API_KEY: ${{ secrets.AFRICASTALKING_API_KEY || 'test_key' }}
+          AFRICASTALKING_SENDERID: SAVANNAHAPI
         run: |
-          python manage.py test api
+          python -m pytest api -v

@@ -72,7 +72,7 @@ class OrderModelTests(TestCase):
 # SMS utility tests
 @pytest.mark.unit
 class SMSUtilityTests(TestCase):
-    @patch('api.utils.africastalking.SMS')
+    @patch('api.utils.sms')
     def test_send_sms(self, mock_sms):
         """Test that SMS can be sent"""
         mock_sms.send.return_value = {'SMSMessageData': {'Recipients': [{'status': 'Success'}]}}
@@ -102,7 +102,7 @@ class SMSUtilityTests(TestCase):
         
         send_order_confirmation_sms(customer, order)
         
-        expected_message = f"Hello {user.firstname}, your order with code {order.order_code} has been confirmed. Thank you for shopping with us!"
+        expected_message = f"Hello {user.first_name}, your order with code {order.order_code} has been confirmed. Thank you for shopping with us!"
         mock_send_sms.assert_called_once_with(customer.phone_number, expected_message)
 
 # Authentication Tests
