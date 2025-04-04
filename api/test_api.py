@@ -341,5 +341,4 @@ class OrderAPITests(APITestCase):
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(Orders.objects.count(), 2)
             self.assertEqual(response.data['total_amount'], '500.00')
-
-            self.assertIsNotNone(response.data['order_code'])            self.assertIsNotNone(response.data['order_code'])
+            self.assertIsNotNone(response.data['order_code'])
