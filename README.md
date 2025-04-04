@@ -41,12 +41,14 @@ We chose cookie-based authentication over JWT tokens for these reasons:
 - **Automatic Transmission**: Cookies are sent automatically with each request
 - **Built-in Expiration**: Cookie lifetimes managed by the browser
 
-### Drawbacks of Our Approach
+### Advantages of Cookie-Based Authentication
 
-- **CSRF Vulnerability**: Requires proper CSRF protection for non-GET requests
-- **Same-Origin Limitation**: Cookies work best when frontend and API are on same domain
-- **Device Limitations**: Some mobile apps may have issues with cookie handling
-- **Scaling Challenges**: Session state can complicate horizontal scaling
+- **Reduced Client-Side Complexity**: No need to implement token storage and transmission logic
+- **Seamless User Experience**: Authentication persists across browser sessions without extra code
+- **Secure by Default**: Modern browsers provide robust security mechanisms for cookies
+- **Revocation Capability**: Server can invalidate sessions instantly by clearing the cookie
+- **Lower Bandwidth Overhead**: Cookies are sent automatically without extra headers in requests
+- **Native Browser Support**: No need for additional libraries to handle authentication
 
 ## 📚 API Endpoints
 
