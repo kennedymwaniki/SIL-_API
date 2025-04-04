@@ -176,7 +176,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = '/prifile/'  # Redirect to profile page after login
+LOGIN_REDIRECT_URL = '/profile/'  # Redirect to profile page after login
 
 
 REST_FRAMEWORK = {

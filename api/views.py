@@ -109,16 +109,7 @@ def google_callback(request):
         customer.refresh_token = tokens.get('refresh_token')
         customer.save()
 
-    response = JsonResponse({
-        'success': True,
-        'user_id': user.id,
-        'customer_id': customer.id,
-        'name': user_info.get('name'),
-        'email': user_info.get('email'),
-        "user_info": user_info,
-        'access_token': tokens.get('access_token'),
-        'refresh_token': tokens.get('refresh_token'),
-    })
+    response = redirect('/profile/')  # Redirect to profile page
 
     # set https-only cookies for the tokens
     # the cookies won't be accessible by javaScript or browser'memory
@@ -208,6 +199,12 @@ class OrderViewset(viewsets.ModelViewSet):
         try:
             user = self.request.user
             customer = Customer.objects.get(user=user)
+            
+            # Add phone number validation
+            if not customer.phone_number:
+                raise serializer.ValidationError(
+                    {"phone_number": "Customer must have a phone number to place orders"})
+                    
             serializer.save(customer=customer)
         except Customer.DoesNotExist:
             raise serializer.ValidationError(
