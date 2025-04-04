@@ -103,7 +103,8 @@ class APIEndToEndTests(APITestCase):
         data = {'total_amount': '3000.00'}  # String, not float
 
         # Patch both SMS utilities to prevent actual SMS sending
-        with patch('api.utils.send_order_confirmation_sms') as mock_sms, \
+        # UPDATED: Use the correct signal path from api.signals module
+        with patch('api.signals.send_order_confirmation_sms') as mock_sms, \
              patch('api.utils.send_sms') as mock_base_sms:
             mock_sms.return_value = True  # Simulate successful SMS sending
             mock_base_sms.return_value = {'SMSMessageData': {
@@ -127,9 +128,9 @@ class APIEndToEndTests(APITestCase):
         url = reverse('order-list')
         data = {'total_amount': '4000.00'}  # String, not float
 
-        # Patch the SMS sending function to verify it's called
-        with patch('api.utils.send_sms') as mock_send_sms, \
-             patch('api.utils.send_order_confirmation_sms') as mock_confirm_sms:
+        # UPDATED: Use the correct signal path from api.signals module
+        with patch('api.signals.send_order_confirmation_sms') as mock_confirm_sms, \
+             patch('api.utils.send_sms') as mock_send_sms:
             mock_send_sms.return_value = {'SMSMessageData': {
                 'Recipients': [{'status': 'Success'}]}}
             mock_confirm_sms.return_value = True
@@ -331,8 +332,9 @@ class OrderAPITests(APITestCase):
         
         # Mock authentication to return our test user
         # Also patch the SMS utility to prevent actual SMS sending
+        # UPDATED: Use the correct signal path from api.signals module
         with patch('api.authentication.CookieAuthentication.authenticate') as mock_auth, \
-             patch('api.utils.send_order_confirmation_sms') as mock_sms, \
+             patch('api.signals.send_order_confirmation_sms') as mock_sms, \
              patch('api.utils.send_sms') as mock_base_sms:
             mock_auth.return_value = (self.user, None)
             mock_sms.return_value = True
