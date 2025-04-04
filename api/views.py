@@ -24,7 +24,7 @@ google_oauth_url = "https://accounts.google.com/o/oauth2/auth"
 
 @csrf_exempt
 def login(request):
-    return JsonResponse({"msg": "Hello, world. You're at the login page."})
+    return JsonResponse({"msg": "Hello there and Welcome, please proceed to accounts/login/ in order to continue"})
 
 
 def google_login(request):
