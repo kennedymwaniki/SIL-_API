@@ -11,3 +11,4 @@ coverage>=7.2.7
 pytest>=7.4.0
 pytest-django>=4.5.2
 pytest-cov>=4.1.0
+PyJWT>=2.8.0  # Add this line
