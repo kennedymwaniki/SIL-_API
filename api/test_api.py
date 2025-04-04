@@ -218,9 +218,9 @@ class GoogleOAuthIntegrationTests(TestCase):
             {'code': 'mock_code', 'state': 'mock_state'}
         )
 
-        # Check response
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertTrue(response.json()['success'])
+        # Check response - expecting redirect, not 200 OK
+        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
+        self.assertEqual(response.url, '/profile/')
 
         # Verify user is created
         self.assertTrue(User.objects.filter(
@@ -278,9 +278,9 @@ class GoogleOAuthIntegrationTests(TestCase):
             {'code': 'mock_code', 'state': 'mock_state'}
         )
 
-        # Check response
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertTrue(response.json()['success'])
+        # Check response - expecting redirect, not 200 OK
+        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
+        self.assertEqual(response.url, '/profile/')
 
         # Verify tokens are updated
         customer.refresh_from_db()

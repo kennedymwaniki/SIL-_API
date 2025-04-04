@@ -287,10 +287,9 @@ class OAuthFlowTests(TestCase):
         # Test the callback with a mock code
         response = self.client.get(reverse('google_callback'), {'code': 'mock_auth_code'})
         
-        # Verify the response
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('success', response.json())
-        self.assertTrue(response.json()['success'])
+        # Verify the response (expect redirect status)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, '/profile/')
         
         # Verify cookies
         self.assertIn('access_token', response.cookies)
