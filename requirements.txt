@@ -1,0 +1,13 @@
+Django>=5.1.7
+djangorestframework>=3.14.0
+psycopg2-binary>=2.9.6
+python-dotenv>=1.0.0
+drf-spectacular>=0.26.2
+drf-spectacular-sidecar>=2024.3.1
+africastalking>=1.2.7
+django-allauth>=0.55.2
+requests>=2.31.0
+coverage>=7.2.7
+pytest>=7.4.0
+pytest-django>=4.5.2
+pytest-cov>=4.1.0
