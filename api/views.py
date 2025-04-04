@@ -210,7 +210,7 @@ class OrderViewset(viewsets.ModelViewSet):
             customer = Customer.objects.get(user=user)
             serializer.save(customer=customer)
         except Customer.DoesNotExist:
-            return Orders.objects.none()
+            raise serializers.ValidationError({"customer": "Customer not found for this user"})
 
 
 class CustomerViewset(viewsets.ModelViewSet):

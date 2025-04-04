@@ -139,6 +139,10 @@ class APIEndToEndTests(APITestCase):
 
             # Use format='json' to ensure proper content type
             response = self.client.post(url, data, format='json')
+            
+            # Print response for debugging
+            print(f"Response status: {response.status_code}")
+            print(f"Response data: {response.data if hasattr(response, 'data') else 'No data'}")
 
             # Verify order was created
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -337,6 +341,10 @@ class OrderAPITests(APITestCase):
             
             # Use format='json' to ensure proper content type
             response = self.client.post(self.url, new_order_data, format='json')
+            
+            # Print response for debugging
+            print(f"Response status: {response.status_code}")
+            print(f"Response data: {response.data if hasattr(response, 'data') else 'No data'}")
             
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(Orders.objects.count(), 2)
