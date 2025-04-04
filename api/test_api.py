@@ -102,19 +102,25 @@ class APIEndToEndTests(APITestCase):
         url = reverse('order-list')
         data = {'total_amount': '3000.00'}  # String, not float
 
-        # We need to patch the SMS utility rather than perform_create
-        with patch('api.utils.send_order_confirmation_sms') as mock_sms:
+        # Patch both SMS utilities to prevent actual SMS sending
+        with patch('api.utils.send_order_confirmation_sms') as mock_sms, \
+             patch('api.utils.send_sms') as mock_base_sms:
             mock_sms.return_value = True  # Simulate successful SMS sending
+            mock_base_sms.return_value = {'SMSMessageData': {
+                'Recipients': [{'status': 'Success'}]}}
 
             # Ensure the authentication is working
             self.mock_auth.return_value = (self.user, None)
 
+            # Use format='json' to ensure proper content type
             response = self.client.post(url, data, format='json')
 
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(response.data['total_amount'], '3000.00')
-            self.assertTrue(Orders.objects.filter(
-                total_amount=3000.00).exists())
+            self.assertTrue(Orders.objects.filter(total_amount=3000.00).exists())
+            
+            # Verify SMS was called
+            self.assertTrue(mock_sms.called)
 
     def test_order_confirmation_sms(self):
         """Test that creating an order triggers a confirmation SMS"""
@@ -122,15 +128,26 @@ class APIEndToEndTests(APITestCase):
         data = {'total_amount': '4000.00'}  # String, not float
 
         # Patch the SMS sending function to verify it's called
-        with patch('api.utils.send_sms') as mock_send_sms:
+        with patch('api.utils.send_sms') as mock_send_sms, \
+             patch('api.utils.send_order_confirmation_sms') as mock_confirm_sms:
             mock_send_sms.return_value = {'SMSMessageData': {
                 'Recipients': [{'status': 'Success'}]}}
+            mock_confirm_sms.return_value = True
 
-            # We also need to modify the OrderViewset to send the SMS
+            # Ensure authentication is working
+            self.mock_auth.return_value = (self.user, None)
+
+            # Use format='json' to ensure proper content type
             response = self.client.post(url, data, format='json')
 
             # Verify order was created
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            
+            # Verify an order with this amount was created
+            self.assertTrue(Orders.objects.filter(total_amount=4000.00).exists())
+            
+            # Verify the SMS sending function was called
+            self.assertTrue(mock_confirm_sms.called)
 
     def test_authenticated_user_operations(self):
         """Test that only authenticated users can access protected endpoints"""
@@ -309,8 +326,14 @@ class OrderAPITests(APITestCase):
         }
         
         # Mock authentication to return our test user
-        with patch('api.authentication.CookieAuthentication.authenticate') as mock_auth:
+        # Also patch the SMS utility to prevent actual SMS sending
+        with patch('api.authentication.CookieAuthentication.authenticate') as mock_auth, \
+             patch('api.utils.send_order_confirmation_sms') as mock_sms, \
+             patch('api.utils.send_sms') as mock_base_sms:
             mock_auth.return_value = (self.user, None)
+            mock_sms.return_value = True
+            mock_base_sms.return_value = {'SMSMessageData': {
+                'Recipients': [{'status': 'Success'}]}}
             
             # Use format='json' to ensure proper content type
             response = self.client.post(self.url, new_order_data, format='json')
@@ -318,4 +341,5 @@ class OrderAPITests(APITestCase):
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(Orders.objects.count(), 2)
             self.assertEqual(response.data['total_amount'], '500.00')
-            self.assertIsNotNone(response.data['order_code'])
+
+            self.assertIsNotNone(response.data['order_code'])            self.assertIsNotNone(response.data['order_code'])
