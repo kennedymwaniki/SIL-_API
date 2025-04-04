@@ -8,9 +8,11 @@ class CustomerSerializer(serializers.ModelSerializer):
         read_only_fields = ['access_token', 'refresh_token']
 
 
-
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Orders 
         fields = ['id', 'customer', 'order_date', 'order_code', 'total_amount']
         read_only_fields = ['order_code']
+        extra_kwargs = {
+            'customer': {'required': False}  # Make customer optional
+        }
