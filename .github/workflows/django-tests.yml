@@ -44,10 +44,14 @@ jobs:
           DB_PASSWORD: 3784
           DB_HOST: localhost
           DB_PORT: 5432
+          SECRET_KEY: "django-insecure-test-key-for-ci-environment"
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID || '' }}
           GOOGLE_SECRET: ${{ secrets.GOOGLE_SECRET || '' }}
           AFRICASTALKING_USERNAME: sandbox
           AFRICASTALKING_API_KEY: ${{ secrets.AFRICASTALKING_API_KEY || 'test_key' }}
           AFRICASTALKING_SENDERID: SAVANNAHAPI
         run: |
+          # Make sure database is properly set up
+          python manage.py migrate
+          # Run tests
           python -m pytest api -v
