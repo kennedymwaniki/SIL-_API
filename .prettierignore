@@ -1,0 +1,3 @@
+# .prettierignore
+# Ignore all Django templates
+*.html

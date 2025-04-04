@@ -11,6 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.exceptions import ValidationError  # Add this import
 from .models import Customer, Orders
 from .serializers import CustomerSerializer, OrderSerializer
 from .authentication import CookieAuthentication
@@ -202,12 +203,12 @@ class OrderViewset(viewsets.ModelViewSet):
             
             # Add phone number validation
             if not customer.phone_number:
-                raise serializer.ValidationError(
+                raise ValidationError(  # Use the imported ValidationError class
                     {"phone_number": "Customer must have a phone number to place orders"})
                     
             serializer.save(customer=customer)
         except Customer.DoesNotExist:
-            raise serializer.ValidationError(
+            raise ValidationError(  # Use the imported ValidationError class
                 {"customer": "Customer not found for this user"})
 
 
@@ -217,19 +218,20 @@ class CustomerViewset(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        # return customer associated with the logged in use
-        return Customer.objects.filter(id=self.request.user.id)
+        # Return customer associated with the logged in user
+        # Fix: filter by user instead of id
+        return Customer.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         try:
-            #  get the customer associated with the user
+            # Get the customer associated with the user
             existing_customer = Customer.objects.get(user=self.request.user)
             # Update the existing customer instead of creating new
             existing_customer.phone_number = serializer.validated_data.get(
                 'phone_number', existing_customer.phone_number)
             existing_customer.save()
         except Customer.DoesNotExist:
-            # create  a new customer if they dont' exist
+            # Create a new customer if they don't exist
             serializer.save(user=self.request.user)
 
     def create(self, request, *args, **kwargs):
@@ -243,6 +245,26 @@ class CustomerViewset(viewsets.ModelViewSet):
             return Response(serializer.data)
         except Customer.DoesNotExist:
             return super().create(request, *args, **kwargs)
+            
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        
+        # Get phone number from request data
+        phone_number = request.data.get('phone_number', '')
+        
+        # Validate that phone number is not empty if provided
+        if 'phone_number' in request.data and not phone_number:
+            return Response(
+                {"phone_number": "Phone number cannot be empty"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        
+        return Response(serializer.data)
 
 
 class ProfileView(APIView):
