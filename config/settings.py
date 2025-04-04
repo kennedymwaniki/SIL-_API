@@ -2,6 +2,8 @@ import os
 from os import getenv
 from dotenv import load_dotenv
 from pathlib import Path
+import dj_database_url
+
 
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -12,12 +14,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-=o9l)c660paf=ipxtxid-i08ke^u$q8j3wt*a*3=gcvn6!ui!&'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -119,7 +121,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-
+# local databse
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -133,6 +135,10 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
+
+
+# Production database
+DATABASES['default'] = dj_database_url.parse(os.getenv('DATABASE_URL'))
 
 
 # Password validation
@@ -202,3 +208,8 @@ SPECTACULAR_SETTINGS = {
     "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
     "REDOC_DIST": "SIDECAR",
 }
+
+
+# static files (CSS, JavaScript, Images)
+STATIC_URL = 'static/'
+MEDIA_URL = '/media/'

@@ -3,6 +3,9 @@ from django.contrib import admin
 from django.urls import path, include
 from api import views
 
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+
+
 from drf_spectacular.views import (
     SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView)
 
@@ -23,3 +26,7 @@ urlpatterns = [
 
     path("profile/", views.ProfileView.as_view(), name="profile"),
 ]
+
+
+urlpatterns += staticfiles_urlpatterns()
+# urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)  # Uncomment if you have media files to serve in development                
