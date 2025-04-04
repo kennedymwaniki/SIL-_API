@@ -4,12 +4,26 @@ from dotenv import load_dotenv
 from django.contrib.auth.models import User
 load_dotenv()
 
+# Add a check to prevent initialization in test environments
 username = os.getenv("AFRICASTALKING_USERNAME")
 api_key = os.getenv("AFRICASTALKING_API_KEY")
-sender_id = os.getenv("")
-africastalking.initialize(username, api_key)
+sender_id = os.getenv("AFRICASTALKING_SENDERID")
 
-sms = africastalking.SMS
+# Only initialize if not in test mode
+import sys
+is_testing = 'test' in sys.argv or 'pytest' in sys.modules
+
+if not is_testing:
+    africastalking.initialize(username, api_key)
+    sms = africastalking.SMS
+else:
+    # Create a mock SMS module for testing
+    class MockSMS:
+        @staticmethod
+        def send(message, recipients):
+            return {"SMSMessageData": {"Recipients": [{"status": "Success"}]}}
+    
+    sms = MockSMS()
 
 
 def send_sms(phone_number, message):
