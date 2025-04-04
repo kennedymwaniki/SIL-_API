@@ -95,11 +95,17 @@ class SMSUtilityTests(TestCase):
             user=user,
             phone_number='+254700000000'
         )
+        
+        # Create the order first, before we start monitoring send_sms calls
         order = Orders.objects.create(
             customer=customer,
             total_amount=1000.00
         )
         
+        # Reset the mock to clear the call that happened during order creation
+        mock_send_sms.reset_mock()
+        
+        # Now test our function directly
         send_order_confirmation_sms(customer, order)
         
         expected_message = f"Hello {user.first_name}, your order with code {order.order_code} has been confirmed. Thank you for shopping with us!"
@@ -236,14 +242,15 @@ class OrderAPITests(APITestCase):
     def test_create_order(self):
         """Test creating a new order"""
         new_order_data = {
-            'total_amount': 500.00
+            'total_amount': '500.00'  # Ensure this is a string, not a float
         }
         
         # Mock authentication to return our test user
         with patch('api.authentication.CookieAuthentication.authenticate') as mock_auth:
             mock_auth.return_value = (self.user, None)
             
-            response = self.client.post(self.url, new_order_data)
+            # Use format='json' to ensure proper content type
+            response = self.client.post(self.url, new_order_data, format='json')
             
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(Orders.objects.count(), 2)

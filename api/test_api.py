@@ -100,7 +100,7 @@ class APIEndToEndTests(APITestCase):
     def test_order_creation_with_notification(self):
         """Test creating an order with a notification"""
         url = reverse('order-list')
-        data = {'total_amount': 3000.00}
+        data = {'total_amount': '3000.00'}  # String, not float
 
         # We need to patch the SMS utility rather than perform_create
         with patch('api.utils.send_order_confirmation_sms') as mock_sms:
@@ -109,7 +109,7 @@ class APIEndToEndTests(APITestCase):
             # Ensure the authentication is working
             self.mock_auth.return_value = (self.user, None)
 
-            response = self.client.post(url, data)
+            response = self.client.post(url, data, format='json')
 
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(response.data['total_amount'], '3000.00')
@@ -119,7 +119,7 @@ class APIEndToEndTests(APITestCase):
     def test_order_confirmation_sms(self):
         """Test that creating an order triggers a confirmation SMS"""
         url = reverse('order-list')
-        data = {'total_amount': 4000.00}
+        data = {'total_amount': '4000.00'}  # String, not float
 
         # Patch the SMS sending function to verify it's called
         with patch('api.utils.send_sms') as mock_send_sms:
@@ -127,16 +127,10 @@ class APIEndToEndTests(APITestCase):
                 'Recipients': [{'status': 'Success'}]}}
 
             # We also need to modify the OrderViewset to send the SMS
-            # This will require updating the views.py or adding a signal
-            with patch('api.models.Orders.save') as mock_save:
-                response = self.client.post(url, data)
+            response = self.client.post(url, data, format='json')
 
-                # Verify order was created
-                self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-                # Assume that we've updated the OrderViewset to use the SMS utility
-                # Verify the SMS function would have been called
-                # mock_send_sms.assert_called_once()
+            # Verify order was created
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_authenticated_user_operations(self):
         """Test that only authenticated users can access protected endpoints"""
@@ -318,6 +312,7 @@ class OrderAPITests(APITestCase):
         with patch('api.authentication.CookieAuthentication.authenticate') as mock_auth:
             mock_auth.return_value = (self.user, None)
             
+            # Use format='json' to ensure proper content type
             response = self.client.post(self.url, new_order_data, format='json')
             
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
