@@ -14,5 +14,5 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = ['id', 'customer', 'order_date', 'order_code', 'total_amount']
         read_only_fields = ['order_code']
         extra_kwargs = {
-            'customer': {'required': False}  # Make customer optional
+            'customer': {'required': False}  
         }

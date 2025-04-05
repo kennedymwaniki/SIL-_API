@@ -3,9 +3,10 @@ import requests
 access_token = "ya29.a0AeXRPp56IihZiXkPWDylEEwsAOuZIe2C0PBUvTF_2qOyxuOWli-2-fRMl2l6J8-taGu-IqSHYO9BXvZPYuFJmLwIWtilwYTTHOKKapUHsz4ns_ePoEjc5usSyZ_TbpPQY8zTqvl4kwjmmloPi4cy-EsijbZ1N9NWSW51WWmI6gaCgYKAaISARISFQHGX2MiGe0H_bLgTHd3Jyyv8n2yJg0177"
 
 response = requests.get(f"https://oauth2.googleapis.com/tokeninfo?access_token={access_token}")
-print(response.json())
+print(response.json()) #if invalidis the response {"error": "invalid_token"} need to refresh it
 print(response.status_code)
 
+# test casefor how access and refresh token
 
 # kennedymk128@gmail.com
 #  the acces and refresh token include
