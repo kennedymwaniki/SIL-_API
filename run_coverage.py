@@ -21,18 +21,18 @@ if __name__ == "__main__":
     )
     cov.start()
 
-    # Setup Django and run tests
+    
     os.environ['DJANGO_SETTINGS_MODULE'] = 'config.settings'
     django.setup()
     TestRunner = get_runner(settings)
     test_runner = TestRunner()
     
-    # If no arguments are provided, run all tests
+    
     test_labels = sys.argv[1:] or ['api']
     
     failures = test_runner.run_tests(test_labels)
     
-    # Generate coverage report
+
     cov.stop()
     cov.save()
     

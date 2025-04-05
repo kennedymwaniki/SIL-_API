@@ -96,7 +96,7 @@ class SMSUtilityTests(TestCase):
             phone_number='+254700000000'
         )
         
-        # Create the order first, before we start monitoring send_sms calls
+        
         order = Orders.objects.create(
             customer=customer,
             total_amount=1000.00

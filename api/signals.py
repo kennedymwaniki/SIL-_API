@@ -6,5 +6,5 @@ from .utils import send_order_confirmation_sms
 @receiver(post_save, sender=Orders)
 def send_confirmation_on_order_create(sender, instance, created, **kwargs):
     """Send confirmation SMS when a new order is created"""
-    if created and instance.customer.phone_number:  # Only send if phone number exists
+    if created and instance.customer.phone_number:  
         send_order_confirmation_sms(instance.customer, instance)

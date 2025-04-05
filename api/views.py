@@ -34,7 +34,7 @@ def google_login(request):
         'response_type': 'code',
         'scope': 'email profile',
         'access_type': 'offline',  # Required for refresh token
-        'prompt': 'consent',  # Force to show the consent dialog
+        'prompt': 'consent',  # show the consent dialog
         'state': request.session.session_key,
         'include_granted_scopes': 'true'  # Include any previously granted scopes
     }
@@ -90,7 +90,7 @@ def google_callback(request):
             # check if a user with the email provided exists in our database
             user = User.objects.get(email=user_info['email'])
         except User.DoesNotExist:
-            # Create new user
+            
             username = user_info.get('email').split('@')[0]
             user = User.objects.create_user(
                 username=username,
@@ -99,7 +99,7 @@ def google_callback(request):
                 last_name=user_info.get('family_name', '')
             )
 
-        # Get or create Customer profile
+        
         customer, created = Customer.objects.get_or_create(
             user=user,
             defaults={'phone_number': ''}
@@ -113,8 +113,7 @@ def google_callback(request):
     response = redirect('/profile/')  # Redirect to profile page
 
     # set https-only cookies for the tokens
-    # the cookies won't be accessible by javaScript or browser'memory
-    max_age = 3600  # For access token (1 hour)
+    max_age = 3600  #
     response.set_cookie(
         'access_token',
         tokens.get('access_token'),
@@ -143,7 +142,7 @@ def refresh_token(request):
     if not refresh_token:
         return JsonResponse({'error': 'No refresh token'}, status=401)
 
-    # Send request to Google to refresh the token
+    
     token_url = 'https://oauth2.googleapis.com/token'
     data = {
         'client_id': settings.SOCIALACCOUNT_PROVIDERS['google']['APPS'][0]['client_id'],
@@ -159,7 +158,7 @@ def refresh_token(request):
 
     tokens = response.json()
 
-    # Update the user's token in the database
+    
     try:
         customer = Customer.objects.get(refresh_token=refresh_token)
         customer.access_token = tokens.get('access_token')
@@ -167,7 +166,7 @@ def refresh_token(request):
     except Customer.DoesNotExist:
         return JsonResponse({'error': 'Invalid refresh token'}, status=401)
 
-    # Create response and set new access token cookie
+    
     api_response = JsonResponse({'success': True})
     api_response.set_cookie(
         'access_token',
@@ -218,20 +217,19 @@ class CustomerViewset(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        # Return customer associated with the logged in user
-        # Fix: filter by user instead of id
+    
         return Customer.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         try:
-            # Get the customer associated with the user
+    
             existing_customer = Customer.objects.get(user=self.request.user)
-            # Update the existing customer instead of creating new
+            
             existing_customer.phone_number = serializer.validated_data.get(
                 'phone_number', existing_customer.phone_number)
             existing_customer.save()
         except Customer.DoesNotExist:
-            # Create a new customer if they don't exist
+            
             serializer.save(user=self.request.user)
 
     def create(self, request, *args, **kwargs):
@@ -250,10 +248,10 @@ class CustomerViewset(viewsets.ModelViewSet):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         
-        # Get phone number from request data
+        
         phone_number = request.data.get('phone_number', '')
         
-        # Validate that phone number is not empty if provided
+    
         if 'phone_number' in request.data and not phone_number:
             return Response(
                 {"phone_number": "Phone number cannot be empty"},
@@ -275,7 +273,7 @@ class ProfileView(APIView):
         user = request.user
         try:
             customer = Customer.objects.get(user=user)
-            # Create a custom response with welcome message
+
             response_data = {
                 "welcome": f"Welcome, {user.first_name} {user.last_name}",
                 "user_id": user.id,
@@ -285,7 +283,7 @@ class ProfileView(APIView):
                 "last_name": user.last_name,
                 "customer_id": customer.id,
                 "phone_number": customer.phone_number,
-                # Exclude sensitive data like tokens
+        
             }
             return Response(response_data)
         except Customer.DoesNotExist:
