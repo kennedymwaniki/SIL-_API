@@ -210,6 +210,10 @@ SPECTACULAR_SETTINGS = {
 }
 
 
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+
 # static files (CSS, JavaScript, Images)
 STATIC_URL = 'static/'
 MEDIA_URL = '/media/'
