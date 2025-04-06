@@ -28,7 +28,6 @@ def login(request):
 
 
 def google_login(request):
-    # Build the redirect URI using the current request's host
     host = request.get_host()
     protocol = 'https' if request.is_secure() else 'http'
     redirect_uri = f"{protocol}://{host}/accounts/google/login/callback/"
@@ -41,7 +40,7 @@ def google_login(request):
         'access_type': 'offline',  # Required for refresh token
         'prompt': 'consent',  # show the consent dialog
         'state': request.session.session_key,
-        'include_granted_scopes': 'true'  # Include any previously granted scopes
+        'include_granted_scopes': 'true'
     }
 
     auth_url = f"https://accounts.google.com/o/oauth2/auth?{urllib.parse.urlencode(params)}"
@@ -53,7 +52,6 @@ def google_callback(request):
     if not code:
         return JsonResponse({'error': 'No code received'})
 
-    # Build the redirect URI using the current request's host
     host = request.get_host()
     protocol = 'https' if request.is_secure() else 'http'
     redirect_uri = f"{protocol}://{host}/accounts/google/login/callback/"
