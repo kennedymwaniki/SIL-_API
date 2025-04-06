@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'allauth',
     'api',
     'allauth.account',
+    'whitenoise'
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'rest_framework',
@@ -47,6 +48,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "allauth.account.middleware.AccountMiddleware",
 ]
