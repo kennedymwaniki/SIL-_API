@@ -28,9 +28,14 @@ def login(request):
 
 
 def google_login(request):
+    # Build the redirect URI using the current request's host
+    host = request.get_host()
+    protocol = 'https' if request.is_secure() else 'http'
+    redirect_uri = f"{protocol}://{host}/accounts/google/login/callback/"
+    
     params = {
         'client_id': settings.SOCIALACCOUNT_PROVIDERS['google']['APPS'][0]['client_id'],
-        'redirect_uri': 'http://127.0.0.1:8000/accounts/google/login/callback/',
+        'redirect_uri': redirect_uri,
         'response_type': 'code',
         'scope': 'email profile',
         'access_type': 'offline',  # Required for refresh token
@@ -48,13 +53,18 @@ def google_callback(request):
     if not code:
         return JsonResponse({'error': 'No code received'})
 
+    # Build the redirect URI using the current request's host
+    host = request.get_host()
+    protocol = 'https' if request.is_secure() else 'http'
+    redirect_uri = f"{protocol}://{host}/accounts/google/login/callback/"
+
     # Token exchange parameters
     token_url = 'https://oauth2.googleapis.com/token'
     data = {
         'code': code,
         'client_id': settings.SOCIALACCOUNT_PROVIDERS['google']['APPS'][0]['client_id'],
         'client_secret': settings.SOCIALACCOUNT_PROVIDERS['google']['APPS'][0]['secret'],
-        'redirect_uri': 'http://127.0.0.1:8000/accounts/google/login/callback/',
+        'redirect_uri': redirect_uri,
         'grant_type': 'authorization_code',
         'access_type': 'offline'
     }
