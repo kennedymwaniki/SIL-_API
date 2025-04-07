@@ -212,23 +212,23 @@ SPECTACULAR_SETTINGS = {
 
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
-SECURE_SSL_REDIRECT = True
-SECURE_HSTS_SECONDS = 31536000  # 1 year
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
+# SECURE_SSL_REDIRECT = True
+# SECURE_HSTS_SECONDS = 31536000  # 1 year
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+# SECURE_HSTS_PRELOAD = True
 
 
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
-SESSION_COOKIE_NAME = 'sessionid'
-SESSION_COOKIE_SECURE = True
-SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = 'Lax'
+# SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+# SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
+# SESSION_COOKIE_NAME = 'sessionid'
+# SESSION_COOKIE_SECURE = True
+# SESSION_COOKIE_HTTPONLY = True
+# SESSION_COOKIE_SAMESITE = 'Lax'
 
-# Session and Cookie Settings
-SESSION_SAVE_EVERY_REQUEST = True  # Add this to ensure session is saved
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+# # Session and Cookie Settings
+# SESSION_SAVE_EVERY_REQUEST = True  # Add this to ensure session is saved
+# SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 
 # static files (CSS, JavaScript, Images)
