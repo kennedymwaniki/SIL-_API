@@ -28,6 +28,13 @@ def login(request):
 
 
 def google_login(request):
+    # Ensure session is created
+    if not request.session.session_key:
+        request.session.create()
+        
+    state = request.session.session_key
+    request.session['oauth_state'] = state  # Store state in session
+    
     host = request.get_host()
     protocol = 'https' if request.is_secure() else 'http'
     redirect_uri = f"{protocol}://{host}/accounts/google/login/callback/"
@@ -37,9 +44,9 @@ def google_login(request):
         'redirect_uri': redirect_uri,
         'response_type': 'code',
         'scope': 'email profile',
-        'access_type': 'offline',  # Required for refresh token
-        'prompt': 'consent',  # show the consent dialog
-        'state': request.session.session_key,
+        'access_type': 'offline',
+        'prompt': 'consent',
+        'state': state,  # Use the stored state
         'include_granted_scopes': 'true'
     }
 
@@ -49,9 +56,22 @@ def google_login(request):
 
 def google_callback(request):
     code = request.GET.get('code')
+    state = request.GET.get('state')
+    
+    # Verify state parameter
+    stored_state = request.session.get('oauth_state')
+    if not stored_state or stored_state != state:
+        return JsonResponse({
+            'error': 'Invalid state parameter',
+            'detail': 'The state parameter does not match the stored value'
+        }, status=400)
+    
+    # Clear the stored state
+    del request.session['oauth_state']
+    
     if not code:
-        return JsonResponse({'error': 'No code received'})
-
+        return JsonResponse({'error': 'No code received'}, status=400)
+        
     host = request.get_host()
     protocol = 'https' if request.is_secure() else 'http'
     redirect_uri = f"{protocol}://{host}/accounts/google/login/callback/"

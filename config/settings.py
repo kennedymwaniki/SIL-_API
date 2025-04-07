@@ -42,8 +42,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'django.contrib.sessions.middleware.SessionMiddleware',  # Must be first
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -225,6 +225,10 @@ SESSION_COOKIE_NAME = 'sessionid'
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
+
+# Session and Cookie Settings
+SESSION_SAVE_EVERY_REQUEST = True  # Add this to ensure session is saved
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 
 # static files (CSS, JavaScript, Images)
