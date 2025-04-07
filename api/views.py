@@ -61,11 +61,11 @@ def google_callback(request):
     code = request.GET.get('code')
     state = request.GET.get('state')
 
-    # Verify state to prevent CSRF attacks
+    
     if not code:
         return JsonResponse({'error': 'No code received'})
 
-    redirect_uri = f"{protocol}://{host}/accounts/google/login/callback/"
+    redirect_uri = os.getenv('REDIRECT_URI')
 
     # Token exchange parameters
     token_url = 'https://oauth2.googleapis.com/token'
