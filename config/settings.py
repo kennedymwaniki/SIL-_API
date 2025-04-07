@@ -218,17 +218,10 @@ CSRF_COOKIE_SECURE = True
 # SECURE_HSTS_PRELOAD = True
 
 
-
-# SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-# SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
-# SESSION_COOKIE_NAME = 'sessionid'
-# SESSION_COOKIE_SECURE = True
-# SESSION_COOKIE_HTTPONLY = True
-# SESSION_COOKIE_SAMESITE = 'Lax'
-
-# # Session and Cookie Settings
-# SESSION_SAVE_EVERY_REQUEST = True  # Add this to ensure session is saved
-# SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # or another appropriate backend
+SESSION_COOKIE_SECURE = True  # for HTTPS
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
 
 
 # static files (CSS, JavaScript, Images)

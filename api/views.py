@@ -32,6 +32,17 @@ def google_login(request):
     protocol = 'https' if request.is_secure() else 'http'
     redirect_uri = f"{protocol}://{host}/accounts/google/login/callback/"
     
+    # Ensure the session is created
+    if not request.session.session_key:
+        request.session.create()
+        
+    # Generate a unique state
+    state = request.session.session_key
+    
+    # Store state in session for verification
+    request.session['oauth_state'] = state
+    request.session.save()
+    
     params = {
         'client_id': settings.SOCIALACCOUNT_PROVIDERS['google']['APPS'][0]['client_id'],
         'redirect_uri': redirect_uri,
@@ -39,7 +50,7 @@ def google_login(request):
         'scope': 'email profile',
         'access_type': 'offline',  # Required for refresh token
         'prompt': 'consent',  # show the consent dialog
-        'state': request.session.session_key,
+        'state': state,
         'include_granted_scopes': 'true'
     }
 
@@ -49,9 +60,19 @@ def google_login(request):
 
 def google_callback(request):
     code = request.GET.get('code')
+    state = request.GET.get('state')
+    
+    # Verify state to prevent CSRF attacks
     if not code:
         return JsonResponse({'error': 'No code received'})
-
+    
+    if not state or state != request.session.get('oauth_state'):
+        return JsonResponse({'error': 'Invalid state parameter'}, status=400)
+    
+    # Clear the state from session after verification
+    if 'oauth_state' in request.session:
+        del request.session['oauth_state']
+    
     host = request.get_host()
     protocol = 'https' if request.is_secure() else 'http'
     redirect_uri = f"{protocol}://{host}/accounts/google/login/callback/"
