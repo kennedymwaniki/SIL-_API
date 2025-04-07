@@ -210,19 +210,7 @@ SPECTACULAR_SETTINGS = {
 }
 
 
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-# SECURE_SSL_REDIRECT = True
-# SECURE_HSTS_SECONDS = 31536000  # 1 year
-# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-# SECURE_HSTS_PRELOAD = True
-
-
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # or another appropriate backend
-SESSION_COOKIE_SECURE = True  # for HTTPS
-SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = 'Lax'
-
+# 
 
 # static files (CSS, JavaScript, Images)
 STATIC_URL = 'static/'
