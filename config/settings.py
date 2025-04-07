@@ -137,7 +137,8 @@ DATABASES = {
 }
 
 # postgress database from render
-DATABASES['default'] = dj_database_url.parse(os.getenv('DATABASE_URL'))
+if os.getenv('DATABASE_URL'):
+        DATABASES['default'] = dj_database_url.parse(os.getenv('DATABASE_URL'))
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
