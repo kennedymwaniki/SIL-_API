@@ -137,8 +137,8 @@ DATABASES = {
 }
 
 # Only use DATABASE_URL if not in local development
-if os.getenv('ENVIRONMENT') != 'development' and os.getenv('DATABASE_URL'):
-    DATABASES['default'] = dj_database_url.parse(os.getenv('DATABASE_URL'))
+# if os.getenv('ENVIRONMENT') != 'development' and os.getenv('DATABASE_URL'):
+DATABASES['default'] = dj_database_url.parse(os.getenv('DATABASE_URL'))
 
 
 # Password validation

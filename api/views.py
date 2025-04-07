@@ -28,20 +28,10 @@ def login(request):
 
 
 def google_login(request):
-    host = request.get_host()
-    protocol = 'https' if request.is_secure() else 'http'
-    redirect_uri = f"{protocol}://{host}/accounts/google/login/callback/"
-    
+
+    redirect_uri = "http://127.0.0.1:8000/accounts/google/login/callback/"
+
     # Ensure the session is created
-    if not request.session.session_key:
-        request.session.create()
-        
-    # Generate a unique state
-    state = request.session.session_key
-    
-    # Store state in session for verification
-    request.session['oauth_state'] = state
-    request.session.save()
     
     params = {
         'client_id': settings.SOCIALACCOUNT_PROVIDERS['google']['APPS'][0]['client_id'],
@@ -61,20 +51,11 @@ def google_login(request):
 def google_callback(request):
     code = request.GET.get('code')
     state = request.GET.get('state')
-    
+
     # Verify state to prevent CSRF attacks
     if not code:
         return JsonResponse({'error': 'No code received'})
-    
-    if not state or state != request.session.get('oauth_state'):
-        return JsonResponse({'error': 'Invalid state parameter'}, status=400)
-    
-    # Clear the state from session after verification
-    if 'oauth_state' in request.session:
-        del request.session['oauth_state']
-    
-    host = request.get_host()
-    protocol = 'https' if request.is_secure() else 'http'
+
     redirect_uri = f"{protocol}://{host}/accounts/google/login/callback/"
 
     # Token exchange parameters
@@ -119,7 +100,7 @@ def google_callback(request):
             # check if a user with the email provided exists in our database
             user = User.objects.get(email=user_info['email'])
         except User.DoesNotExist:
-            
+
             username = user_info.get('email').split('@')[0]
             user = User.objects.create_user(
                 username=username,
@@ -128,7 +109,6 @@ def google_callback(request):
                 last_name=user_info.get('family_name', '')
             )
 
-        
         customer, created = Customer.objects.get_or_create(
             user=user,
             defaults={'phone_number': ''}
@@ -171,7 +151,6 @@ def refresh_token(request):
     if not refresh_token:
         return JsonResponse({'error': 'No refresh token'}, status=401)
 
-    
     token_url = 'https://oauth2.googleapis.com/token'
     data = {
         'client_id': settings.SOCIALACCOUNT_PROVIDERS['google']['APPS'][0]['client_id'],
@@ -187,7 +166,6 @@ def refresh_token(request):
 
     tokens = response.json()
 
-    
     try:
         customer = Customer.objects.get(refresh_token=refresh_token)
         customer.access_token = tokens.get('access_token')
@@ -195,7 +173,6 @@ def refresh_token(request):
     except Customer.DoesNotExist:
         return JsonResponse({'error': 'Invalid refresh token'}, status=401)
 
-    
     api_response = JsonResponse({'success': True})
     api_response.set_cookie(
         'access_token',
@@ -228,12 +205,12 @@ class OrderViewset(viewsets.ModelViewSet):
         try:
             user = self.request.user
             customer = Customer.objects.get(user=user)
-            
+
             # Add phone number validation
             if not customer.phone_number:
                 raise ValidationError(  # Use the imported ValidationError class
                     {"phone_number": "Customer must have a phone number to place orders"})
-                    
+
             serializer.save(customer=customer)
         except Customer.DoesNotExist:
             raise ValidationError(  # Use the imported ValidationError class
@@ -246,19 +223,19 @@ class CustomerViewset(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-    
+
         return Customer.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         try:
-    
+
             existing_customer = Customer.objects.get(user=self.request.user)
-            
+
             existing_customer.phone_number = serializer.validated_data.get(
                 'phone_number', existing_customer.phone_number)
             existing_customer.save()
         except Customer.DoesNotExist:
-            
+
             serializer.save(user=self.request.user)
 
     def create(self, request, *args, **kwargs):
@@ -272,25 +249,24 @@ class CustomerViewset(viewsets.ModelViewSet):
             return Response(serializer.data)
         except Customer.DoesNotExist:
             return super().create(request, *args, **kwargs)
-            
+
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        
-        
+
         phone_number = request.data.get('phone_number', '')
-        
-    
+
         if 'phone_number' in request.data and not phone_number:
             return Response(
                 {"phone_number": "Phone number cannot be empty"},
                 status=status.HTTP_400_BAD_REQUEST
             )
-            
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
-        
+
         return Response(serializer.data)
 
 
@@ -312,7 +288,7 @@ class ProfileView(APIView):
                 "last_name": user.last_name,
                 "customer_id": customer.id,
                 "phone_number": customer.phone_number,
-        
+
             }
             return Response(response_data)
         except Customer.DoesNotExist:
