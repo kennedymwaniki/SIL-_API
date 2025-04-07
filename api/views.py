@@ -40,7 +40,6 @@ def google_login(request):
         'scope': 'email profile',
         'access_type': 'offline',  # Required for refresh token
         'prompt': 'consent',  # show the consent dialog
-        'state': state,
         'include_granted_scopes': 'true'
     }
 
