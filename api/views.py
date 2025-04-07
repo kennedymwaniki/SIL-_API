@@ -18,6 +18,16 @@ from .authentication import CookieAuthentication
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 
+import os
+from os import getenv
+from dotenv import load_dotenv
+
+
+
+load_dotenv()
+
+
+
 # Create your views here.
 google_oauth_url = "https://accounts.google.com/o/oauth2/auth"
 
@@ -29,7 +39,7 @@ def login(request):
 
 def google_login(request):
 
-    redirect_uri = "http://127.0.0.1:8000/accounts/google/login/callback/"
+    redirect_uri = os.getenv('REDIRECT_URI')
 
     # Ensure the session is created
     
