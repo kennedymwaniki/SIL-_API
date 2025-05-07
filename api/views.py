@@ -217,12 +217,12 @@ class OrderViewset(viewsets.ModelViewSet):
 
             # Add phone number validation
             if not customer.phone_number:
-                raise ValidationError(  # Use the imported ValidationError class
+                raise ValidationError(  
                     {"phone_number": "Customer must have a phone number to place orders"})
 
             serializer.save(customer=customer)
         except Customer.DoesNotExist:
-            raise ValidationError(  # Use the imported ValidationError class
+            raise ValidationError(  
                 {"customer": "Customer not found for this user"})
 
 
