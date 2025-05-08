@@ -42,7 +42,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.contrib.sessions.middleware.SessionMiddleware', 
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -137,8 +137,8 @@ DATABASES = {
 }
 
 # postgress database from render
-# if os.getenv('DATABASE_URL'):
-#         DATABASES['default'] = dj_database_url.parse(os.getenv('DATABASE_URL'))
+if os.getenv('DATABASE_URL'):
+    DATABASES['default'] = dj_database_url.parse(os.getenv('DATABASE_URL'))
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -209,7 +209,7 @@ SPECTACULAR_SETTINGS = {
 }
 
 
-# 
+#
 
 # static files (CSS, JavaScript, Images)
 STATIC_URL = 'static/'
