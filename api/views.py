@@ -23,9 +23,7 @@ from os import getenv
 from dotenv import load_dotenv
 
 
-
 load_dotenv()
-
 
 
 # Create your views here.
@@ -41,8 +39,6 @@ def google_login(request):
 
     redirect_uri = os.getenv('REDIRECT_URI')
 
-    # Ensure the session is created
-    
     params = {
         'client_id': settings.SOCIALACCOUNT_PROVIDERS['google']['APPS'][0]['client_id'],
         'redirect_uri': redirect_uri,
@@ -59,9 +55,7 @@ def google_login(request):
 
 def google_callback(request):
     code = request.GET.get('code')
-    state = request.GET.get('state')
 
-    
     if not code:
         return JsonResponse({'error': 'No code received'})
 
@@ -89,11 +83,11 @@ def google_callback(request):
 
     tokens = response.json()
 
-    # Check if refresh token is present
+    # check if refresh token is present
     if 'refresh_token' not in tokens:
         print("No refresh token was returned")
 
-    # Get user info using access token
+    # get user info using access token
     userinfo_url = 'https://www.googleapis.com/oauth2/v3/userinfo'
     headers = {'Authorization': f'Bearer {tokens["access_token"]}'}
     userinfo_response = requests.get(userinfo_url, headers=headers)
@@ -118,7 +112,7 @@ def google_callback(request):
                 last_name=user_info.get('family_name', '')
             )
 
-        customer, created = Customer.objects.get_or_create(
+        customer = Customer.objects.get_or_create(
             user=user,
             defaults={'phone_number': ''}
         )
@@ -141,7 +135,7 @@ def google_callback(request):
         samesite='Lax'
     )
 
-    # Refresh token lasts much longer
+    # refresh token lasts much longer
     response.set_cookie(
         'refresh_token',
         tokens.get('refresh_token'),
@@ -217,12 +211,12 @@ class OrderViewset(viewsets.ModelViewSet):
 
             # Add phone number validation
             if not customer.phone_number:
-                raise ValidationError(  
+                raise ValidationError(
                     {"phone_number": "Customer must have a phone number to place orders"})
 
             serializer.save(customer=customer)
         except Customer.DoesNotExist:
-            raise ValidationError(  
+            raise ValidationError(
                 {"customer": "Customer not found for this user"})
 
 
