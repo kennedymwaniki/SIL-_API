@@ -112,7 +112,7 @@ def google_callback(request):
                 last_name=user_info.get('family_name', '')
             )
 
-        customer = Customer.objects.get_or_create(
+        customer, created = Customer.objects.get_or_create(
             user=user,
             defaults={'phone_number': ''}
         )
