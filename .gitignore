@@ -1,3 +1,5 @@
 .venv
 .env
 staticfiles
+
+k8s

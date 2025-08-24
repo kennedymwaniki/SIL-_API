@@ -135,7 +135,6 @@ def google_callback(request):
         samesite='Lax'
     )
 
-    # refresh token lasts much longer
     response.set_cookie(
         'refresh_token',
         tokens.get('refresh_token'),
