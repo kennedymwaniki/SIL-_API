@@ -56,8 +56,9 @@ USER appuser
 
 EXPOSE 8000
 
-# create a wrapper script to wait for database and run migrations
-COPY --chown=appuser:appuser docker-entrypoint.sh /app/
-RUN chmod +x /app/docker-entrypoint.sh
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 
-CMD ["/app/docker-entrypoint.sh"]
+# script to wait for database and run migrations
+# COPY --chown=appuser:appuser docker-entrypoint.sh /app/
+# RUN chmod +x /app/docker-entrypoint.sh
+# CMD ["/app/docker-entrypoint.sh"]
