@@ -12,13 +12,13 @@ RUN mkdir /app
 WORKDIR /app
 
 # set environment variables
-# Prevent python from writing pyc files to sdk
+# prevent python from writing pyc files to sdk
 ENV PYTHONDONTWRITEBYTECODE 1
 
-# Prevent python from buffering stdout and stderr
+# prevent python from buffering stdout and stderr
 ENV PYTHONUNBUFFERED 1
 
-# Upgrade pip and install dependencies
+# upgrade pip and install dependencies
 RUN pip install --upgrade pip 
 
 # copy requirements
@@ -56,7 +56,7 @@ USER appuser
 
 EXPOSE 8000
 
-# Create a wrapper script to wait for database and run migrations
+# create a wrapper script to wait for database and run migrations
 COPY --chown=appuser:appuser docker-entrypoint.sh /app/
 RUN chmod +x /app/docker-entrypoint.sh
 
